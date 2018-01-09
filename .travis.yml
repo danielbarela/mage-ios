@@ -1,3 +1,4 @@
 language: objective-c
 xcode_workspace: MAGE.xcworkspace
 xcode_scheme: MAGETests
+
