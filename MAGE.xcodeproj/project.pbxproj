@@ -157,6 +157,7 @@
 		F798FAAF19A4E4580010B052 /* ObservationDatePickerTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F798FAAE19A4E4580010B052 /* ObservationDatePickerTableViewCell.m */; };
 		F798FAB219A4E5200010B052 /* ObservationEditSelectTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F798FAB119A4E5200010B052 /* ObservationEditSelectTableViewCell.m */; };
 		F7994AB7190EF7BD00A90A1D /* MageRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F7994AB6190EF7BD00A90A1D /* MageRootViewController.m */; };
+		F799A7F420052D43005F0063 /* MAGETests.m in Sources */ = {isa = PBXBuildFile; fileRef = F799A7F320052D43005F0063 /* MAGETests.m */; };
 		F79E9D3E19D49E6A00AA55E6 /* ObservationCheckboxTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F79E9D3D19D49E6A00AA55E6 /* ObservationCheckboxTableViewCell.m */; };
 		F79E9D4119D4A01900AA55E6 /* ObservationEditGeometryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F79E9D4019D4A01900AA55E6 /* ObservationEditGeometryTableViewCell.m */; };
 		F79E9D4719D4B16E00AA55E6 /* ObservationEditTextFieldTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F79E9D4619D4B16E00AA55E6 /* ObservationEditTextFieldTableViewCell.m */; };
@@ -251,6 +252,16 @@
 		F7FD4DF91A80126300DAABA6 /* StyledPolyline.m in Sources */ = {isa = PBXBuildFile; fileRef = F7FD4DF81A80126300DAABA6 /* StyledPolyline.m */; };
 		F7FD4DFC1A810EA900DAABA6 /* AreaAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = F7FD4DFB1A810EA900DAABA6 /* AreaAnnotation.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F799A7F620052D43005F0063 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F7A94D5E18AD9CAF00CB9EE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F7A94D6518AD9CB000CB9EE0;
+			remoteInfo = MAGE;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		043FF11E1C22F643000CA07F /* CacheOverlays.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheOverlays.h; sourceTree = "<group>"; };
@@ -537,6 +548,9 @@
 		F798FAB119A4E5200010B052 /* ObservationEditSelectTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObservationEditSelectTableViewCell.m; sourceTree = "<group>"; };
 		F7994AB5190EF7BD00A90A1D /* MageRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MageRootViewController.h; sourceTree = "<group>"; };
 		F7994AB6190EF7BD00A90A1D /* MageRootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MageRootViewController.m; sourceTree = "<group>"; };
+		F799A7F120052D43005F0063 /* MAGETests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MAGETests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F799A7F320052D43005F0063 /* MAGETests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MAGETests.m; sourceTree = "<group>"; };
+		F799A7F520052D43005F0063 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F79E9D3C19D49E6A00AA55E6 /* ObservationCheckboxTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObservationCheckboxTableViewCell.h; sourceTree = "<group>"; };
 		F79E9D3D19D49E6A00AA55E6 /* ObservationCheckboxTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObservationCheckboxTableViewCell.m; sourceTree = "<group>"; };
 		F79E9D3F19D4A01900AA55E6 /* ObservationEditGeometryTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObservationEditGeometryTableViewCell.h; sourceTree = "<group>"; };
@@ -679,6 +693,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		F799A7EE20052D43005F0063 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F7A94D6318AD9CB000CB9EE0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1231,6 +1252,15 @@
 			name = Constraints;
 			sourceTree = "<group>";
 		};
+		F799A7F220052D43005F0063 /* MAGETests */ = {
+			isa = PBXGroup;
+			children = (
+				F799A7F320052D43005F0063 /* MAGETests.m */,
+				F799A7F520052D43005F0063 /* Info.plist */,
+			);
+			path = MAGETests;
+			sourceTree = "<group>";
+		};
 		F7A292291FC3938F00DE5463 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
@@ -1249,6 +1279,7 @@
 			children = (
 				F7A94D7118AD9CB000CB9EE0 /* Mage */,
 				2FD853771BE1564F00602CEA /* Resources */,
+				F799A7F220052D43005F0063 /* MAGETests */,
 				F7A94D6818AD9CB000CB9EE0 /* Frameworks */,
 				2FDBB3021C65940E000C6C2F /* Scripts */,
 				F7A94D6718AD9CB000CB9EE0 /* Products */,
@@ -1260,6 +1291,7 @@
 			isa = PBXGroup;
 			children = (
 				F7A94D6618AD9CB000CB9EE0 /* MAGE.app */,
+				F799A7F120052D43005F0063 /* MAGETests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1429,6 +1461,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		F799A7F020052D43005F0063 /* MAGETests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F799A7FA20052D43005F0063 /* Build configuration list for PBXNativeTarget "MAGETests" */;
+			buildPhases = (
+				F799A7ED20052D43005F0063 /* Sources */,
+				F799A7EE20052D43005F0063 /* Frameworks */,
+				F799A7EF20052D43005F0063 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F799A7F720052D43005F0063 /* PBXTargetDependency */,
+			);
+			name = MAGETests;
+			productName = MAGETests;
+			productReference = F799A7F120052D43005F0063 /* MAGETests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		F7A94D6518AD9CB000CB9EE0 /* MAGE */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F7A94D9818AD9CB000CB9EE0 /* Build configuration list for PBXNativeTarget "MAGE" */;
@@ -1463,6 +1513,12 @@
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "National Geospatial Intelligence Agency";
 				TargetAttributes = {
+					F799A7F020052D43005F0063 = {
+						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = ZL8G5D9G2H;
+						ProvisioningStyle = Automatic;
+						TestTargetID = F7A94D6518AD9CB000CB9EE0;
+					};
 					F7A94D6518AD9CB000CB9EE0 = {
 						DevelopmentTeam = ZL8G5D9G2H;
 						SystemCapabilities = {
@@ -1496,11 +1552,19 @@
 			projectRoot = "";
 			targets = (
 				F7A94D6518AD9CB000CB9EE0 /* MAGE */,
+				F799A7F020052D43005F0063 /* MAGETests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		F799A7EF20052D43005F0063 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F7A94D6418AD9CB000CB9EE0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1738,6 +1802,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F799A7ED20052D43005F0063 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F799A7F420052D43005F0063 /* MAGETests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F7A94D6218AD9CB000CB9EE0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1904,6 +1976,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		F799A7F720052D43005F0063 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F7A94D6518AD9CB000CB9EE0 /* MAGE */;
+			targetProxy = F799A7F620052D43005F0063 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		2F389C901DCD21D100F05C95 /* MapSettings.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -1964,6 +2044,71 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		F799A7F820052D43005F0063 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZL8G5D9G2H;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = MAGETests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = mil.nga.mage.MAGETests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MAGE.app/MAGE";
+			};
+			name = Debug;
+		};
+		F799A7F920052D43005F0063 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = ZL8G5D9G2H;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = MAGETests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = mil.nga.mage.MAGETests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MAGE.app/MAGE";
+			};
+			name = Release;
+		};
 		F7A94D9618AD9CB000CB9EE0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2102,6 +2247,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F799A7FA20052D43005F0063 /* Build configuration list for PBXNativeTarget "MAGETests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F799A7F820052D43005F0063 /* Debug */,
+				F799A7F920052D43005F0063 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F7A94D6118AD9CAF00CB9EE0 /* Build configuration list for PBXProject "MAGE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
