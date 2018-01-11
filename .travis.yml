@@ -6,7 +6,7 @@ xcode_sdk: iphonesimulator
 env:
   global:
     - "IOS11=\"platform=iOS Simulator,name=iPhone X,OS=11.2\""
-    - "IOS10=\"platform=iOS Simulator,name=iPhone X,OS=10.3\""
+    - "IOS10=\"platform=iOS Simulator,name=iPhone 7,OS=10.3.1\""
   matrix:
     - DESTINATION="$IOS11"
     - DESTINATION="$IOS10"
