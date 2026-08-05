@@ -125,7 +125,10 @@ public enum AttachmentKey : String {
     case localPath
     case lastModified
     case markedForDeletion
-    
+    case processingStatus
+    case processingMessage
+    case processingHook
+
     var key: String {
         return self.rawValue
     }

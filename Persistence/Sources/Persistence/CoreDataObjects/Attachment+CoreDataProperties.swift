@@ -34,4 +34,7 @@ public extension Attachment {
     @NSManaged var taskIdentifier: NSNumber?
     @NSManaged var markedForDeletion: Bool
     @NSManaged var order: NSNumber?
+    @NSManaged var processingStatus: String?
+    @NSManaged var processingMessage: String?
+    @NSManaged var processingHook: String?
 }

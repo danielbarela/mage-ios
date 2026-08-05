@@ -5,6 +5,11 @@ Adheres to [Semantic Versioning](http://semver.org/).
 ---
 ## Pending on develop
 ##### Features
+* ClamAV Attachment Scanning & UI
+* Attachment carousel & attachment count
+* 'Attachment(s) Failed' count on thumbnail with placeholder for failed attachments
+* Removable placeholders like any other attachment
+
 ##### Bug Fixes
 
 ## 4.3.0

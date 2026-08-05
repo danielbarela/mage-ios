@@ -54,6 +54,9 @@ class AttachmentSlideShow: UIView {
     private var height: CGFloat = 150.0;
     private weak var attachmentSelectionDelegate: AttachmentSelectionDelegate?;
     private var scheme: MDCContainerScheming?;
+
+    // Called with the new zero-based page index whenever the carousel settles on a page.
+    var onPageChanged: ((Int) -> Void)?
     
     private lazy var slidescroll: UIScrollView = {
         let slidescroll = UIScrollView(forAutoLayout: ());
@@ -167,11 +170,13 @@ class AttachmentSlideShow: UIView {
     func populate(observation: Observation, attachmentSelectionDelegate: AttachmentSelectionDelegate?) {
         self.attachmentSelectionDelegate = attachmentSelectionDelegate;
         
-        guard let attachments = (observation.orderedAttachments)?.filter({ attachment in
-            return attachment.url != nil
-        }) else {
+        guard let orderedAttachments = observation.orderedAttachments else {
             return
         }
+        // Passed attachments lead the carousel so a mixed pass/fail observation's default
+        // (page 0) slide is always a real image, not whichever attachment happened to upload first.
+        let attachments = orderedAttachments.filter { $0.processingStatus != "rejected" && $0.processingStatus != "error" }
+            + orderedAttachments.filter { $0.processingStatus == "rejected" || $0.processingStatus == "error" }
         // remove deleted attachments
         for view in stackView.arrangedSubviews {
             if let attachmentView: AttachmentUIImageView = view as? AttachmentUIImageView {
@@ -211,6 +216,15 @@ class AttachmentSlideShow: UIView {
             
             guard let imageView = imageView else {
                 return;
+            }
+            if (attachment.processingStatus == "rejected" || attachment.processingStatus == "error") {
+                let iconConfig = UIImage.SymbolConfiguration(pointSize: 56, weight: .regular);
+                imageView.image = UIImage(systemName: "exclamationmark.circle.fill")?.withConfiguration(iconConfig);
+                imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.87);
+                imageView.contentMode = .center;
+                imageView.setAttachment(attachment: attachment);
+                imageView.accessibilityLabel = "attachment \(attachment.name ?? "") upload failed";
+                continue;
             }
             if (attachment.contentType?.hasPrefix("image") ?? false) {
                 imageView.setAttachment(attachment: attachment);
@@ -337,5 +351,6 @@ extension AttachmentSlideShow : UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let pageNumber = round(scrollView.contentOffset.x / scrollView.frame.size.width)
         pageControl.currentPage = Int(pageNumber)
+        onPageChanged?(pageControl.currentPage);
     }
 }

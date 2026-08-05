@@ -36,7 +36,10 @@ extension Attachment {
             self.dirty = false;
         }
         self.localPath = json[AttachmentKey.localPath.key] as? String
-        
+        self.processingStatus = json[AttachmentKey.processingStatus.key] as? String
+        self.processingMessage = json[AttachmentKey.processingMessage.key] as? String
+        self.processingHook = json[AttachmentKey.processingHook.key] as? String
+
         if let lastModified = json[AttachmentKey.lastModified.key] as? String {
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = [.withDashSeparatorInDate, .withFullDate, .withFractionalSeconds, .withTime, .withColonSeparatorInTime, .withTimeZone];
