@@ -14,6 +14,9 @@ class NumberFieldView : BaseFieldView {
     private var min: NSNumber?;
     private var max: NSNumber?;
 
+    private let fieldUndoManager = UndoManager()
+    private var sessionStartValue: String?
+
     lazy var helperText: String? = {
         var helper: String? = nil;
         if (self.min != nil && self.max != nil) {
@@ -39,28 +42,34 @@ class NumberFieldView : BaseFieldView {
         return formatter;
     }()
 
-    private lazy var accessoryView: UIToolbar = {
-        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44));
-        toolbar.autoSetDimension(.height, toSize: 60);
-
-        let undoButton = UIBarButtonItem(
+    private lazy var undoButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
             image: UIImage(systemName: "arrow.uturn.backward"),
             style: .plain,
             target: self,
             action: #selector(undoPressed)
         );
-        undoButton.accessibilityLabel = "Undo";
+        button.accessibilityLabel = "Undo";
+        button.isEnabled = false;
+        return button;
+    }()
 
-        let redoButton = UIBarButtonItem(
+    private lazy var redoButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
             image: UIImage(systemName: "arrow.uturn.forward"),
             style: .plain,
             target: self,
             action: #selector(redoPressed)
         );
-        redoButton.accessibilityLabel = "Redo";
+        button.accessibilityLabel = "Redo";
+        button.isEnabled = false;
+        return button;
+    }()
 
+    private lazy var accessoryView: UIToolbar = {
+        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44));
+        toolbar.autoSetDimension(.height, toSize: 60);
         let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil);
-
         toolbar.items = [undoButton, redoButton, flexSpace];
         toolbar.alpha = 0;
         return toolbar;
@@ -148,12 +157,52 @@ class NumberFieldView : BaseFieldView {
         textField.text = number?.stringValue
     }
 
+    private func setUndoableText(_ newText: String?, oldText: String?) {
+        fieldUndoManager.registerUndo(withTarget: self) { target in
+            target.setUndoableText(oldText, oldText: newText)
+        }
+        setValue(newText)
+        let valid = isValid(enforceRequired: true, number: number)
+        setValid(valid)
+        delegate?.fieldValueChanged(field, value: number)
+        refreshUndoRedoButtons()
+    }
+
+    private func refreshUndoRedoButtons() {
+        let hasUncommittedChange = textField.text != sessionStartValue
+        undoButton.isEnabled = fieldUndoManager.canUndo || hasUncommittedChange
+        redoButton.isEnabled = fieldUndoManager.canRedo
+    }
+
+    private func closeCurrentSession() {
+        let currentText = textField.text
+        guard sessionStartValue != currentText else { return }
+        let number = formatter.number(from: currentText ?? "")
+        let valid = isValid(enforceRequired: true, number: number)
+        setValid(valid)
+        if valid {
+            setUndoableText(currentText, oldText: sessionStartValue)
+            sessionStartValue = currentText
+        } else {
+            self.number = number
+        }
+    }
+
     @objc func undoPressed() {
-        textField.undoManager?.undo();
+        closeCurrentSession()
+        if fieldUndoManager.canUndo {
+            fieldUndoManager.undo()
+        }
+        sessionStartValue = textField.text
+        refreshUndoRedoButtons()
     }
 
     @objc func redoPressed() {
-        textField.undoManager?.redo();
+        if fieldUndoManager.canRedo {
+            fieldUndoManager.redo()
+        }
+        sessionStartValue = textField.text
+        refreshUndoRedoButtons()
     }
 
     override func isEmpty() -> Bool {
@@ -213,6 +262,7 @@ class NumberFieldView : BaseFieldView {
 extension NumberFieldView {
     @objc func textFieldDidChange() {
         showAccessoryView();
+        refreshUndoRedoButtons()
     }
 
     func showAccessoryView() {
@@ -221,12 +271,17 @@ extension NumberFieldView {
             self.accessoryView.alpha = 1;
         }
     }
+
+    func shouldShowAccessoryView() -> Bool {
+        return !isEmpty() || fieldUndoManager.canUndo || fieldUndoManager.canRedo
+    }
 }
 
 extension NumberFieldView: UITextFieldDelegate {
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        accessoryView.alpha = isEmpty() ? 0 : 1;
+        sessionStartValue = textField.text
+        accessoryView.alpha = shouldShowAccessoryView() ? 1 : 0;
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
@@ -234,15 +289,16 @@ extension NumberFieldView: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if let text: String = textField.text {
-            let number = formatter.number(from: text);
-            let valid = isValid(enforceRequired: true, number: number);
-            setValid(valid);
-            if (valid && (number == nil || (self.number?.stringValue != textField.text))) {
-                delegate?.fieldValueChanged(field, value: number);
-            }
-            self.number = number;
+        let newText = textField.text
+        let number = formatter.number(from: newText ?? "")
+        let valid = isValid(enforceRequired: true, number: number)
+        setValid(valid)
+        if valid, sessionStartValue != newText {
+            setUndoableText(newText, oldText: sessionStartValue)
+        } else {
+            self.number = number
         }
+        sessionStartValue = nil
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
