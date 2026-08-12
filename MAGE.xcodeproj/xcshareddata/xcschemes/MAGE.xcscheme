@@ -37,6 +37,12 @@
             ReferencedContainer = "container:MAGE.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:MAGE.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO">
@@ -45,6 +51,17 @@
                BlueprintIdentifier = "F7ED5D2320052161007BD768"
                BuildableName = "MAGETests.xctest"
                BlueprintName = "MAGETests"
+               ReferencedContainer = "container:MAGE.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F7352CCD302CF7EA00EEA4D7"
+               BuildableName = "SwiftTestingTests.xctest"
+               BlueprintName = "SwiftTestingTests"
                ReferencedContainer = "container:MAGE.xcodeproj">
             </BuildableReference>
          </TestableReference>
