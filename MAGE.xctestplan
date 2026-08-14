@@ -9,6 +9,12 @@
     }
   ],
   "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "TESTING",
+        "value" : "true"
+      }
+    ],
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
@@ -95,6 +101,20 @@
         "containerPath" : "container:MAGE.xcodeproj",
         "identifier" : "F7352CCD302CF7EA00EEA4D7",
         "name" : "SwiftTestingTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:SettingsFetch",
+        "identifier" : "SettingsFetchTests",
+        "name" : "SettingsFetchTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Settings",
+        "identifier" : "SettingsTests",
+        "name" : "SettingsTests"
       }
     }
   ],
