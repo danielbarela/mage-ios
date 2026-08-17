@@ -226,6 +226,15 @@ class AttachmentSlideShow: UIView {
                 imageView.accessibilityLabel = "attachment \(attachment.name ?? "") upload failed";
                 continue;
             }
+            if (attachment.dirty && attachment.processingStatus == nil) {
+                let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
+                imageView.image = UIImage(systemName: "arrow.up.circle")?.withConfiguration(iconConfig);
+                imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6);
+                imageView.contentMode = .center;
+                imageView.setAttachment(attachment: attachment);
+                imageView.accessibilityLabel = "attachment \(attachment.name ?? "") uploading";
+                continue;
+            }
             if (attachment.processingStatus == "pending") {
                 let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
                 imageView.image = UIImage(systemName: "icloud.and.arrow.up")?.withConfiguration(iconConfig);

@@ -153,7 +153,6 @@ class ObservationCompactView: UIView {
 
         let activeAttachments = observation.attachments?.filter { !$0.markedForDeletion }
         let failedCount = failedAttachmentCount(observation: observation)
-        let hasRealAttachment = includeAttachments && (activeAttachments?.filter { $0.url != nil }.count ?? 0) > 0
         let hasAnyAttachment = includeAttachments && (activeAttachments?.count ?? 0) > 0
         if hasAnyAttachment {
             // No delegate here on purpose - tapping an attachment thumbnail in this list/card
@@ -161,9 +160,7 @@ class ObservationCompactView: UIView {
             // not jump straight to the attachment viewer.
             attachmentSlideshow.populate(observation: observation, attachmentSelectionDelegate: nil);
         }
-        // Keep the slideshow's frame alive (even with nothing to populate) whenever there's a
-        // failed badge to show, since the badge overlays on top of it and relies on its geometry.
-        attachmentSlideshow.isHidden = !(hasRealAttachment || failedCount > 0 || (activeAttachments?.count ?? 0) > 1);
+        attachmentSlideshow.isHidden = !hasAnyAttachment;
 
         applyTheme(withScheme: scheme);
 

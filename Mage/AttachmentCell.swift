@@ -181,6 +181,28 @@ import Persistence
             return;
         }
 
+        if (attachment.dirty && attachment.processingStatus == nil) {
+            let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
+            self.imageView.image = UIImage(systemName: "arrow.up.circle")?.withConfiguration(iconConfig);
+            self.imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6);
+            self.imageView.contentMode = .center;
+            self.imageView.accessibilityLabel = "attachment \(attachment.name ?? "") uploading";
+
+            let label = UILabel.newAutoLayout()
+            label.text = "\(attachment.name ?? "")\nUploading..."
+            label.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6)
+            label.font = scheme?.typographyScheme.overline
+            label.textAlignment = .center
+            label.numberOfLines = 2
+            label.lineBreakMode = .byTruncatingTail
+            label.autoSetDimension(.height, toSize: label.font.pointSize * 2)
+            imageView.addSubview(label)
+            label.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8), excludingEdge: .top)
+
+            self.backgroundColor = scheme?.colorScheme.backgroundColor
+            return;
+        }
+
         if (attachment.processingStatus == "pending") {
             let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
             self.imageView.image = UIImage(systemName: "icloud.and.arrow.up")?.withConfiguration(iconConfig);
