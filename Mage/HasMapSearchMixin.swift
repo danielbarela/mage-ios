@@ -8,6 +8,7 @@
 
 import Foundation
 import MapKit
+import Settings
 
 import MGRS
 import GARS
@@ -29,6 +30,7 @@ class HasMapSearchMixin: NSObject, MapMixin {
     var navigationController: UINavigationController?
     var annotation: MKPointAnnotation?
     var searchController: SearchSheetController
+    private var observeSettingsTask: Task<Void, Never>!
 
     private lazy var mapSearchButton: MDCFloatingButton = {
         let mapSearchButton = MDCFloatingButton(shape: .mini)
@@ -45,6 +47,42 @@ class HasMapSearchMixin: NSObject, MapMixin {
         self.navigationController = navigationController
         self.scheme = scheme
         self.searchController = SearchSheetController(mapView: hasMapSearch.mapView, scheme: scheme)
+        super.init()
+        observeSettingsTask = Task { @MainActor [weak self] in
+            guard let observeSettings = try? await DependencyContainer.shared
+                .useCaseFactory
+                .resolve(.ObserveSettingsUseCase)
+            else {
+                return
+            }
+            for await settings in observeSettings.execute() {
+                guard let self else { return }
+                searchController.configureSettings(settings: settings)
+                self.updateSearchUI(using: settings)
+            }
+        }
+    }
+    
+    @MainActor
+    func updateSearchUI(using settings: SettingsModel) {
+        if settings.mapSearchType != .none {
+            if rootView.arrangedSubviews.count < indexInView {
+                rootView.insertArrangedSubview(mapSearchButton, at: rootView.arrangedSubviews.count)
+            } else {
+                rootView.insertArrangedSubview(mapSearchButton, at: indexInView)
+            }
+            
+            applyTheme(scheme: hasMapSearch.scheme)
+        } else {
+            if rootView.arrangedSubviews.contains(mapSearchButton) {
+                rootView.removeArrangedSubview(mapSearchButton)
+                mapSearchButton.removeFromSuperview()
+            }
+        }
+    }
+    
+    deinit {
+        observeSettingsTask.cancel()
     }
     
     func applyTheme(scheme: MDCContainerScheming?) {
@@ -54,19 +92,12 @@ class HasMapSearchMixin: NSObject, MapMixin {
     }
     
     func setupMixin() {
-        if UserDefaults.standard.showMapSearch {
-            if rootView.arrangedSubviews.count < indexInView {
-                rootView.insertArrangedSubview(mapSearchButton, at: rootView.arrangedSubviews.count)
-            } else {
-                rootView.insertArrangedSubview(mapSearchButton, at: indexInView)
-            }
-            
-            applyTheme(scheme: hasMapSearch.scheme)
-        }
+        applyTheme(scheme: hasMapSearch.scheme)
     }
     
     func cleanupMixin() {
         self.searchController.dismiss(animated: true)
+        observeSettingsTask.cancel()
     }
     
     @objc func mapSearchButtonTapped(_ sender: UIButton) {
@@ -74,13 +105,23 @@ class HasMapSearchMixin: NSObject, MapMixin {
     }
     
     func showSearchBottomSheet() {
+        if searchController.presentingViewController != nil {
+            searchController.dismiss(animated: true)
+            return
+        }
+        
         searchController.delegate = self
         searchController.modalPresentationStyle = .formSheet
+        
         if let sheet = searchController.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
             sheet.largestUndimmedDetentIdentifier = .large
         }
-        self.navigationController?.present(searchController, animated: true, completion: nil)
+        
+        navigationController?.present(
+            searchController,
+            animated: true
+        )
     }
     
     func viewForAnnotation(annotation: MKAnnotation, mapView: MKMapView) -> MKAnnotationView? {
@@ -124,6 +165,14 @@ extension HasMapSearchMixin: SearchControllerDelegate {
         mapView.layoutMargins.bottom = screenHeight / 2
         
         hasMapSearch.onSearchResultSelected(result: result)
+    }
+    
+    func clearSearchResults() {
+        guard let mapView = hasMapSearch.mapView else { return }
+
+        if let annotation = annotation {
+            mapView.removeAnnotation(annotation)
+        }
     }
     
     private func getRegion(searchType: SearchResponseType, location: CLLocationCoordinate2D, grid: String?) -> MKCoordinateRegion {
