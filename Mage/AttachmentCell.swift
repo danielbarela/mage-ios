@@ -145,12 +145,13 @@ import Persistence
             self.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showFailureMessage)));
 
             let label = UILabel.newAutoLayout()
-            label.text = "Upload Failed"
+            label.text = "\(attachment.name ?? "")\nUpload Failed"
             label.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6)
             label.font = scheme?.typographyScheme.overline
             label.textAlignment = .center
-            label.numberOfLines = 1
-            label.autoSetDimension(.height, toSize: label.font.pointSize)
+            label.numberOfLines = 2
+            label.lineBreakMode = .byTruncatingTail
+            label.autoSetDimension(.height, toSize: label.font.lineHeight * 2)
             imageView.addSubview(label)
             label.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
             label.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
@@ -170,6 +171,13 @@ import Persistence
             hintLabel.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
 
             self.backgroundColor = scheme?.colorScheme.backgroundColor
+
+            if let button = button {
+                self.addSubview(button);
+                button.autoPinEdge(.bottom, to: .bottom, of: self.imageView, withOffset: -8);
+                button.autoPinEdge(.right, to: .right, of: self.imageView, withOffset: -8);
+            }
+
             return;
         }
 

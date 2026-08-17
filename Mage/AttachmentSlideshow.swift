@@ -170,7 +170,7 @@ class AttachmentSlideShow: UIView {
     func populate(observation: Observation, attachmentSelectionDelegate: AttachmentSelectionDelegate?) {
         self.attachmentSelectionDelegate = attachmentSelectionDelegate;
         
-        guard let orderedAttachments = observation.orderedAttachments else {
+        guard let orderedAttachments = observation.orderedAttachments?.filter({ !$0.markedForDeletion }) else {
             return
         }
         // Passed attachments lead the carousel so a mixed pass/fail observation's default
@@ -224,6 +224,15 @@ class AttachmentSlideShow: UIView {
                 imageView.contentMode = .center;
                 imageView.setAttachment(attachment: attachment);
                 imageView.accessibilityLabel = "attachment \(attachment.name ?? "") upload failed";
+                continue;
+            }
+            if (attachment.processingStatus == "pending") {
+                let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
+                imageView.image = UIImage(systemName: "icloud.and.arrow.up")?.withConfiguration(iconConfig);
+                imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6);
+                imageView.contentMode = .center;
+                imageView.setAttachment(attachment: attachment);
+                imageView.accessibilityLabel = "attachment \(attachment.name ?? "") upload pending";
                 continue;
             }
             if (attachment.contentType?.hasPrefix("image") ?? false) {

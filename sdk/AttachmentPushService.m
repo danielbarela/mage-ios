@@ -304,6 +304,7 @@ NSString * const kAttachmentBackgroundSessionIdentifier = @"mil.nga.mage.backgro
         __weak __typeof__(self) weakSelf = self;
         [context MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError * _Nullable error) {
             [weakSelf.pushTasks removeObject:[NSNumber numberWithLong:task.taskIdentifier]];
+            [NSNotificationCenter.defaultCenter postNotificationName:@"AttachmentPushed" object:nil];
         }];
     } else {
         // try again

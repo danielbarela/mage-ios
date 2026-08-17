@@ -69,6 +69,18 @@ class ObservationCompactView: UIView {
         return badge
     }()
 
+    // Row containing the failed attachment badge, placed under the carousel and above the
+    // coordinates row. Wraps the badge (leading/top/bottom only, no trailing) so the badge
+    // keeps hugging its own content width instead of stretching with the stack's .fill alignment.
+    private lazy var failedAttachmentRow: UIView = {
+        let row = UIView.newAutoLayout()
+        row.addSubview(failedAttachmentBadge)
+        failedAttachmentBadge.autoPinEdge(toSuperviewEdge: .leading, withInset: 8)
+        failedAttachmentBadge.autoPinEdge(toSuperviewEdge: .top, withInset: 8)
+        failedAttachmentBadge.autoPinEdge(toSuperviewEdge: .bottom, withInset: 8)
+        return row
+    }()
+
     // Adding number of attachments
     private lazy var attachmentCountLabel: UILabel = {
         let label = UILabel.newAutoLayout()
@@ -139,9 +151,10 @@ class ObservationCompactView: UIView {
         observationActionsView.populate(observation: observation, delegate: actionsDelegate);
         attachmentSlideshow.applyTheme(withScheme: scheme)
 
+        let activeAttachments = observation.attachments?.filter { !$0.markedForDeletion }
         let failedCount = failedAttachmentCount(observation: observation)
-        let hasRealAttachment = includeAttachments && (observation.attachments?.filter { $0.url != nil }.count ?? 0) > 0
-        let hasAnyAttachment = includeAttachments && (observation.attachments?.count ?? 0) > 0
+        let hasRealAttachment = includeAttachments && (activeAttachments?.filter { $0.url != nil }.count ?? 0) > 0
+        let hasAnyAttachment = includeAttachments && (activeAttachments?.count ?? 0) > 0
         if hasAnyAttachment {
             // No delegate here on purpose - tapping an attachment thumbnail in this list/card
             // context should open the observation, same as tapping anywhere else on the card,
@@ -150,18 +163,18 @@ class ObservationCompactView: UIView {
         }
         // Keep the slideshow's frame alive (even with nothing to populate) whenever there's a
         // failed badge to show, since the badge overlays on top of it and relies on its geometry.
-        attachmentSlideshow.isHidden = !(hasRealAttachment || failedCount > 0 || (observation.attachments?.count ?? 0) > 1);
+        attachmentSlideshow.isHidden = !(hasRealAttachment || failedCount > 0 || (activeAttachments?.count ?? 0) > 1);
 
         applyTheme(withScheme: scheme);
 
         if failedCount > 0 {
             failedAttachmentLabel.text = failedCount > 1 ? "Attachments Failed - \(failedCount)" : "Attachment Failed"
-            failedAttachmentBadge.isHidden = false
+            failedAttachmentRow.isHidden = false
         } else {
-            failedAttachmentBadge.isHidden = true
+            failedAttachmentRow.isHidden = true
         }
 
-        totalAttachmentCount = observation.attachments?.count ?? 0
+        totalAttachmentCount = activeAttachments?.count ?? 0
         if totalAttachmentCount > 1 {
             attachmentCountLabel.text = "1 of \(totalAttachmentCount)"
             attachmentCountBadge.isHidden = false
@@ -176,15 +189,13 @@ class ObservationCompactView: UIView {
 
     // Counter function for failed attachments
     func failedAttachmentCount(observation: Observation) -> Int {
-        return observation.attachments?.filter { $0.processingStatus == "rejected" || $0.processingStatus == "error" }.count ?? 0
+        return observation.attachments?.filter { !$0.markedForDeletion && ($0.processingStatus == "rejected" || $0.processingStatus == "error") }.count ?? 0
     }
 
     override func updateConstraints() {
         if (!didSetUpConstraints) {
             stackView.autoPinEdgesToSuperviewEdges();
             failedAttachmentBadge.layer.cornerRadius = 12
-            failedAttachmentBadge.autoPinEdge(.top, to: .top, of: attachmentSlideshow, withOffset: 8)
-            failedAttachmentBadge.autoPinEdge(.leading, to: .leading, of: attachmentSlideshow, withOffset: 8)
             attachmentCountBadge.layer.cornerRadius = 12
             attachmentCountBadge.autoPinEdge(.bottom, to: .bottom, of: attachmentSlideshow, withOffset: -8)
             attachmentCountBadge.autoPinEdge(.trailing, to: .trailing, of: attachmentSlideshow, withOffset: -8)
@@ -203,8 +214,8 @@ class ObservationCompactView: UIView {
             self.stackView.addArrangedSubview(importantView);
             self.stackView.addArrangedSubview(observationSummaryView);
             self.stackView.addArrangedSubview(attachmentSlideshow);
-            self.attachmentSlideshow.addSubview(failedAttachmentBadge);
             self.attachmentSlideshow.addSubview(attachmentCountBadge);
+            self.stackView.addArrangedSubview(failedAttachmentRow);
             self.stackView.addArrangedSubview(observationActionsView);
             // Explicit gesture rather than relying on the tap falling through the view
             // hierarchy to the card - AttachmentSlideShow and its internal scroll/stack views
