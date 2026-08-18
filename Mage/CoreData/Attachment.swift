@@ -58,6 +58,26 @@ extension Attachment {
     }
 }
 
+extension Attachment {
+    private enum ProcessingStatusValue {
+        static let pending = "pending"
+        static let rejected = "rejected"
+        static let error = "error"
+    }
+
+    public var isUploading: Bool {
+        dirty && processingStatus == nil
+    }
+
+    public var isProcessingPending: Bool {
+        processingStatus == ProcessingStatusValue.pending
+    }
+
+    public var isProcessingFailed: Bool {
+        processingStatus == ProcessingStatusValue.rejected || processingStatus == ProcessingStatusValue.error
+    }
+}
+
 @objc extension Attachment {
     @objc public func sourceURL(size: NSInteger) -> URL? {
         if let localPath = self.localPath, FileManager.default.fileExists(atPath: localPath) {

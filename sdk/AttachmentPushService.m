@@ -266,7 +266,6 @@ NSString * const kAttachmentBackgroundSessionIdentifier = @"mil.nga.mage.backgro
     attachment.name = [response valueForKey:@"name"];
     attachment.url = [response valueForKey:@"url"];
 
-    // processing fields - reads from servers json response but sets the attributes in xcode
     attachment.processingStatus = [response valueForKey:@"processingStatus"];
     attachment.processingMessage = [response valueForKey:@"processingMessage"];
     attachment.processingHook = [response valueForKey:@"processingHook"];
@@ -300,7 +299,6 @@ NSString * const kAttachmentBackgroundSessionIdentifier = @"mil.nga.mage.backgro
             [NSNotificationCenter.defaultCenter postNotificationName:@"AttachmentPushed" object:nil];
         }];
     } else if (attachment.processingStatus != nil) {
-        // Server is tracking status
         __weak __typeof__(self) weakSelf = self;
         [context MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError * _Nullable error) {
             [weakSelf.pushTasks removeObject:[NSNumber numberWithLong:task.taskIdentifier]];

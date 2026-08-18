@@ -175,8 +175,8 @@ class AttachmentSlideShow: UIView {
         }
         // Passed attachments lead the carousel so a mixed pass/fail observation's default
         // (page 0) slide is always a real image, not whichever attachment happened to upload first.
-        let attachments = orderedAttachments.filter { $0.processingStatus != "rejected" && $0.processingStatus != "error" }
-            + orderedAttachments.filter { $0.processingStatus == "rejected" || $0.processingStatus == "error" }
+        let attachments = orderedAttachments.filter { !$0.isProcessingFailed }
+            + orderedAttachments.filter { $0.isProcessingFailed }
         // remove deleted attachments
         for view in stackView.arrangedSubviews {
             if let attachmentView: AttachmentUIImageView = view as? AttachmentUIImageView {
@@ -217,7 +217,7 @@ class AttachmentSlideShow: UIView {
             guard let imageView = imageView else {
                 return;
             }
-            if (attachment.processingStatus == "rejected" || attachment.processingStatus == "error") {
+            if (attachment.isProcessingFailed) {
                 let iconConfig = UIImage.SymbolConfiguration(pointSize: 56, weight: .regular);
                 imageView.image = UIImage(systemName: "exclamationmark.circle.fill")?.withConfiguration(iconConfig);
                 imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.87);
@@ -226,7 +226,7 @@ class AttachmentSlideShow: UIView {
                 imageView.accessibilityLabel = "attachment \(attachment.name ?? "") upload failed";
                 continue;
             }
-            if (attachment.dirty && attachment.processingStatus == nil) {
+            if (attachment.isUploading) {
                 let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
                 imageView.image = UIImage(systemName: "arrow.up.circle")?.withConfiguration(iconConfig);
                 imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6);
@@ -235,7 +235,7 @@ class AttachmentSlideShow: UIView {
                 imageView.accessibilityLabel = "attachment \(attachment.name ?? "") uploading";
                 continue;
             }
-            if (attachment.processingStatus == "pending") {
+            if (attachment.isProcessingPending) {
                 let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
                 imageView.image = UIImage(systemName: "icloud.and.arrow.up")?.withConfiguration(iconConfig);
                 imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6);

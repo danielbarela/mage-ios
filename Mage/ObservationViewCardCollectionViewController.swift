@@ -138,6 +138,9 @@ class ObservationViewCardCollectionViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated);
         ObservationPushService.singleton.addDelegate(delegate: self);
+        if let observationUpdatedObserver = observationUpdatedObserver {
+            NotificationCenter.default.removeObserver(observationUpdatedObserver);
+        }
         observationUpdatedObserver = NotificationCenter.default.addObserver(forName: .ObservationUpdated, object: nil, queue: .main) { [weak self] notification in
             guard let self = self, let updatedRemoteId = notification.userInfo?["remoteId"] as? String, updatedRemoteId == self.observation?.remoteId else {
                 return;

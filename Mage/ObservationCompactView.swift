@@ -52,7 +52,6 @@ class ObservationCompactView: UIView {
         return actions;
     }();
 
-    // Introducing label for failed attachments
     private lazy var failedAttachmentLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textAlignment = .center
@@ -60,7 +59,6 @@ class ObservationCompactView: UIView {
         return label
     }()
 
-    // Adding failed label to the observation badge
     private lazy var failedAttachmentBadge: UIView = {
         let badge = UIView.newAutoLayout()
         badge.addSubview(failedAttachmentLabel)
@@ -81,7 +79,6 @@ class ObservationCompactView: UIView {
         return row
     }()
 
-    // Adding number of attachments
     private lazy var attachmentCountLabel: UILabel = {
         let label = UILabel.newAutoLayout()
         label.textAlignment = .center
@@ -133,7 +130,6 @@ class ObservationCompactView: UIView {
         failedAttachmentBadge.backgroundColor = errorScheme.colorScheme.primaryColor.withAlphaComponent(0.12)
         failedAttachmentLabel.textColor = errorScheme.colorScheme.primaryColor
 
-        // Neutral color - non-error
         attachmentCountBadge.backgroundColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.85)
         attachmentCountLabel.textColor = .white
     }
@@ -184,9 +180,8 @@ class ObservationCompactView: UIView {
         attachmentSlideshow.clear()
     }
 
-    // Counter function for failed attachments
     func failedAttachmentCount(observation: Observation) -> Int {
-        return observation.attachments?.filter { !$0.markedForDeletion && ($0.processingStatus == "rejected" || $0.processingStatus == "error") }.count ?? 0
+        return observation.attachments?.filter { !$0.markedForDeletion && $0.isProcessingFailed }.count ?? 0
     }
 
     override func updateConstraints() {

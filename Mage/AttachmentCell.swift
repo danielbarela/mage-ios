@@ -135,7 +135,7 @@ import Persistence
         self.imageView.kf.indicatorType = .none;
         self.imageView.tintColor = scheme?.colorScheme.onBackgroundColor.withAlphaComponent(0.4);
 
-        if (attachment.processingStatus == "rejected" || attachment.processingStatus == "error") {
+        if (attachment.isProcessingFailed) {
             let iconConfig = UIImage.SymbolConfiguration(pointSize: 56, weight: .regular);
             self.imageView.image = UIImage(systemName: "exclamationmark.circle.fill")?.withConfiguration(iconConfig);
             self.imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.87);
@@ -156,7 +156,6 @@ import Persistence
             label.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
             label.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
 
-            // Adding sub-text of different size
             let hintLabel = UILabel.newAutoLayout()
             hintLabel.text = "Tap for Details"
             hintLabel.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.4)
@@ -181,7 +180,7 @@ import Persistence
             return;
         }
 
-        if (attachment.dirty && attachment.processingStatus == nil) {
+        if (attachment.isUploading) {
             let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
             self.imageView.image = UIImage(systemName: "arrow.up.circle")?.withConfiguration(iconConfig);
             self.imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6);
@@ -195,7 +194,7 @@ import Persistence
             label.textAlignment = .center
             label.numberOfLines = 2
             label.lineBreakMode = .byTruncatingTail
-            label.autoSetDimension(.height, toSize: label.font.pointSize * 2)
+            label.autoSetDimension(.height, toSize: label.font.lineHeight * 2)
             imageView.addSubview(label)
             label.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8), excludingEdge: .top)
 
@@ -203,7 +202,7 @@ import Persistence
             return;
         }
 
-        if (attachment.processingStatus == "pending") {
+        if (attachment.isProcessingPending) {
             let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
             self.imageView.image = UIImage(systemName: "icloud.and.arrow.up")?.withConfiguration(iconConfig);
             self.imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6);
@@ -217,7 +216,7 @@ import Persistence
             label.textAlignment = .center
             label.numberOfLines = 2
             label.lineBreakMode = .byTruncatingTail
-            label.autoSetDimension(.height, toSize: label.font.pointSize * 2)
+            label.autoSetDimension(.height, toSize: label.font.lineHeight * 2)
             imageView.addSubview(label)
             label.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8), excludingEdge: .top)
 
