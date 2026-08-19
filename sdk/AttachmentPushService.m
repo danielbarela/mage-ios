@@ -265,6 +265,11 @@ NSString * const kAttachmentBackgroundSessionIdentifier = @"mil.nga.mage.backgro
     attachment.remoteId = [response valueForKey:@"id"];
     attachment.name = [response valueForKey:@"name"];
     attachment.url = [response valueForKey:@"url"];
+
+    attachment.processingStatus = [response valueForKey:@"processingStatus"];
+    attachment.processingMessage = [response valueForKey:@"processingMessage"];
+    attachment.processingHook = [response valueForKey:@"processingHook"];
+
     attachment.taskIdentifier = nil;
     NSString *dateString = [response valueForKey:@"lastModified"];
     if (dateString != nil) {
@@ -291,6 +296,12 @@ NSString * const kAttachmentBackgroundSessionIdentifier = @"mil.nga.mage.backgro
                 NSLog(@"ATTACHMENT - Error removing temporary attachment upload file %@", removeError);
             }
             
+            [NSNotificationCenter.defaultCenter postNotificationName:@"AttachmentPushed" object:nil];
+        }];
+    } else if (attachment.processingStatus != nil) {
+        __weak __typeof__(self) weakSelf = self;
+        [context MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError * _Nullable error) {
+            [weakSelf.pushTasks removeObject:[NSNumber numberWithLong:task.taskIdentifier]];
             [NSNotificationCenter.defaultCenter postNotificationName:@"AttachmentPushed" object:nil];
         }];
     } else {

@@ -26,6 +26,7 @@ class ObservationViewCardCollectionViewController: UIViewController {
     var bottomSheet: MDCBottomSheetController?;
     var scheme: MDCContainerScheming?;
     var attachmentCard: ObservationAttachmentCard?;
+    var observationUpdatedObserver: NSObjectProtocol?;
     let attachmentHeader: CardHeader = CardHeader(headerText: "ATTACHMENTS");
     let formsHeader = FormsHeader(forAutoLayout: ());
     
@@ -137,20 +138,29 @@ class ObservationViewCardCollectionViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated);
         ObservationPushService.singleton.addDelegate(delegate: self);
+        if let observationUpdatedObserver = observationUpdatedObserver {
+            NotificationCenter.default.removeObserver(observationUpdatedObserver);
+        }
+        observationUpdatedObserver = NotificationCenter.default.addObserver(forName: .ObservationUpdated, object: nil, queue: .main) { [weak self] notification in
+            guard let self = self, let updatedRemoteId = notification.userInfo?["remoteId"] as? String, updatedRemoteId == self.observation?.remoteId else {
+                return;
+            }
+            self.setupObservation();
+        }
         setupObservation();
         if let scheme = self.scheme {
             applyTheme(withContainerScheme: scheme);
         }
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated);
-        
+
         let removedSubviews = cards.reduce([]) { (allSubviews, subview) -> [UIView] in
             stackView.removeArrangedSubview(subview)
             return allSubviews + [subview]
         }
-        
+
         for v in removedSubviews {
             if v.superview != nil {
                 v.removeFromSuperview()
@@ -158,6 +168,9 @@ class ObservationViewCardCollectionViewController: UIViewController {
         }
         cards = [];
         ObservationPushService.singleton.removeDelegate(delegate: self);
+        if let observationUpdatedObserver = observationUpdatedObserver {
+            NotificationCenter.default.removeObserver(observationUpdatedObserver);
+        }
     }
     
     func setupObservation() {

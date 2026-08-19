@@ -56,6 +56,18 @@ import Persistence
             }
         }
     }
+
+    // The card's own ripple triggers automatically for taps it receives directly (see `tap(_:)`
+    // above). A tap on the attachment carousel never reaches the card's touch handling at all,
+    // so it needs to be played manually at the right point before navigating.
+    private func rippleAndViewObservation(at pointInCard: CGPoint) {
+        guard let observation = observation else { return }
+        card.rippleView.beginRippleTouchDown(at: pointInCard, animated: true, completion: nil);
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.card.rippleView.beginRippleTouchUp(animated: true, completion: nil);
+            self.actionsDelegate?.viewObservation?(observation);
+        }
+    }
     
     public func configure(observation: Observation, scheme: MDCContainerScheming?, actionsDelegate: ObservationActionsDelegate?, attachmentSelectionDelegate: AttachmentSelectionDelegate?) {
         self.observation = observation;
@@ -84,6 +96,10 @@ import Persistence
         if (!constructed) {
             self.contentView.addSubview(card);
             card.addSubview(compactView);
+            compactView.onAttachmentAreaTapped = { [weak self] pointInCompactView in
+                guard let self = self else { return }
+                self.rippleAndViewObservation(at: self.card.convert(pointInCompactView, from: self.compactView));
+            }
             setNeedsUpdateConstraints();
             constructed = true;
         }

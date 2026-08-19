@@ -10,6 +10,7 @@ import Persistence
 @objc class AttachmentCell: UICollectionViewCell {
     
     private var button: MDCFloatingButton?;
+    private var attachment: Attachment?;
     
     private lazy var imageView: AttachmentUIImageView = {
         let imageView: AttachmentUIImageView = AttachmentUIImageView(image: nil);
@@ -37,6 +38,16 @@ import Persistence
             view.removeFromSuperview()
         }
         button?.removeFromSuperview();
+        self.attachment = nil;
+        for recognizer in self.imageView.gestureRecognizers ?? [] {
+            self.imageView.removeGestureRecognizer(recognizer);
+        }
+    }
+
+    @objc func showFailureMessage() {
+        if let window = self.window {
+            ToastView.show(message: attachment?.processingMessage ?? "Upload failed", in: window);
+        }
     }
     
     func getAttachmentUrl(attachment: Attachment) -> URL? {
@@ -120,8 +131,99 @@ import Persistence
     @objc public func setImage(attachment: Attachment, formatName:NSString, button: MDCFloatingButton? = nil, scheme: MDCContainerScheming? = nil) {
         layoutSubviews();
         self.button = button;
+        self.attachment = attachment;
         self.imageView.kf.indicatorType = .none;
         self.imageView.tintColor = scheme?.colorScheme.onBackgroundColor.withAlphaComponent(0.4);
+
+        if (attachment.isProcessingFailed) {
+            let iconConfig = UIImage.SymbolConfiguration(pointSize: 56, weight: .regular);
+            self.imageView.image = UIImage(systemName: "exclamationmark.circle.fill")?.withConfiguration(iconConfig);
+            self.imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.87);
+            self.imageView.contentMode = .center;
+            self.imageView.accessibilityLabel = "attachment \(attachment.name ?? "") upload failed";
+            self.imageView.isUserInteractionEnabled = true;
+            self.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showFailureMessage)));
+
+            let label = UILabel.newAutoLayout()
+            label.text = "\(attachment.name ?? "")\nUpload Failed"
+            label.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6)
+            label.font = scheme?.typographyScheme.overline
+            label.textAlignment = .center
+            label.numberOfLines = 2
+            label.lineBreakMode = .byTruncatingTail
+            label.autoSetDimension(.height, toSize: label.font.lineHeight * 2)
+            imageView.addSubview(label)
+            label.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
+            label.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
+
+            let hintLabel = UILabel.newAutoLayout()
+            hintLabel.text = "Tap for Details"
+            hintLabel.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.4)
+            hintLabel.font = UIFont.systemFont(ofSize: 10)
+            hintLabel.textAlignment = .center
+            hintLabel.numberOfLines = 1
+            hintLabel.autoSetDimension(.height, toSize: hintLabel.font.pointSize)
+            imageView.addSubview(hintLabel)
+            hintLabel.autoPinEdge(.top, to: .bottom, of: label, withOffset: 2)
+            hintLabel.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
+            hintLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
+            hintLabel.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
+
+            self.backgroundColor = scheme?.colorScheme.backgroundColor
+
+            if let button = button {
+                self.addSubview(button);
+                button.autoPinEdge(.bottom, to: .bottom, of: self.imageView, withOffset: -8);
+                button.autoPinEdge(.right, to: .right, of: self.imageView, withOffset: -8);
+            }
+
+            return;
+        }
+
+        if (attachment.isUploading) {
+            let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
+            self.imageView.image = UIImage(systemName: "arrow.up.circle")?.withConfiguration(iconConfig);
+            self.imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6);
+            self.imageView.contentMode = .center;
+            self.imageView.accessibilityLabel = "attachment \(attachment.name ?? "") uploading";
+
+            let label = UILabel.newAutoLayout()
+            label.text = "\(attachment.name ?? "")\nUploading..."
+            label.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6)
+            label.font = scheme?.typographyScheme.overline
+            label.textAlignment = .center
+            label.numberOfLines = 2
+            label.lineBreakMode = .byTruncatingTail
+            label.autoSetDimension(.height, toSize: label.font.lineHeight * 2)
+            imageView.addSubview(label)
+            label.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8), excludingEdge: .top)
+
+            self.backgroundColor = scheme?.colorScheme.backgroundColor
+            return;
+        }
+
+        if (attachment.isProcessingPending) {
+            let iconConfig = UIImage.SymbolConfiguration(pointSize: 32, weight: .regular);
+            self.imageView.image = UIImage(systemName: "icloud.and.arrow.up")?.withConfiguration(iconConfig);
+            self.imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6);
+            self.imageView.contentMode = .center;
+            self.imageView.accessibilityLabel = "attachment \(attachment.name ?? "") upload pending";
+
+            let label = UILabel.newAutoLayout()
+            label.text = "\(attachment.name ?? "")\nUpload pending..."
+            label.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6)
+            label.font = scheme?.typographyScheme.overline
+            label.textAlignment = .center
+            label.numberOfLines = 2
+            label.lineBreakMode = .byTruncatingTail
+            label.autoSetDimension(.height, toSize: label.font.lineHeight * 2)
+            imageView.addSubview(label)
+            label.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8), excludingEdge: .top)
+
+            self.backgroundColor = scheme?.colorScheme.backgroundColor
+            return;
+        }
+
         if (attachment.contentType?.hasPrefix("image") ?? false) {
             self.imageView.setAttachment(attachment: attachment);
             self.imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.87);

@@ -36,7 +36,10 @@ extension Attachment {
             self.dirty = false;
         }
         self.localPath = json[AttachmentKey.localPath.key] as? String
-        
+        self.processingStatus = json[AttachmentKey.processingStatus.key] as? String
+        self.processingMessage = json[AttachmentKey.processingMessage.key] as? String
+        self.processingHook = json[AttachmentKey.processingHook.key] as? String
+
         if let lastModified = json[AttachmentKey.lastModified.key] as? String {
             let formatter = ISO8601DateFormatter()
             formatter.formatOptions = [.withDashSeparatorInDate, .withFullDate, .withFractionalSeconds, .withTime, .withColonSeparatorInTime, .withTimeZone];
@@ -52,6 +55,26 @@ extension Attachment {
             self.markedForDeletion = false;
         }
         
+    }
+}
+
+extension Attachment {
+    private enum ProcessingStatusValue {
+        static let pending = "pending"
+        static let rejected = "rejected"
+        static let error = "error"
+    }
+
+    public var isUploading: Bool {
+        dirty && processingStatus == nil
+    }
+
+    public var isProcessingPending: Bool {
+        processingStatus == ProcessingStatusValue.pending
+    }
+
+    public var isProcessingFailed: Bool {
+        processingStatus == ProcessingStatusValue.rejected || processingStatus == ProcessingStatusValue.error
     }
 }
 
