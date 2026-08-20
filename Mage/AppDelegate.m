@@ -34,6 +34,7 @@
 @property (nonatomic, strong) BaseMapOverlay *darkBackgroundOverlay;
 @property (nonatomic, strong) GPKGGeoPackage *backgroundGeoPackage;
 @property (nonatomic, strong) GPKGGeoPackage *darkBackgroundGeoPackage;
+@property (nonatomic, assign) BOOL observingTokenExpiration;
 @end
 
 @implementation AppDelegate
@@ -75,13 +76,38 @@
     }
     [[AFNetworkActivityIndicatorManager sharedManager] setEnabled:YES];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenDidExpire:) name: MAGETokenExpiredNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(geoPackageDownloaded:) name:Layer.GeoPackageDownloaded object:nil];
-    
     [MageInitializer initializePreferences];
     [MageInitializer setupPersistenceWithCompletionHandler:^{
         [self startMageApp];
     }];
+}
+
+- (void)startObservingTokenExpiration {
+    if (self.observingTokenExpiration) {
+        return;
+    }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenDidExpire:) name:MAGETokenExpiredNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(geoPackageDownloaded:) name:Layer.GeoPackageDownloaded object:nil];
+    
+    self.observingTokenExpiration = YES;
+}
+
+- (void)stopObservingTokenExpiration {
+    if (!self.observingTokenExpiration) {
+        return;
+    }
+    
+    [[NSNotificationCenter defaultCenter]
+     removeObserver:self
+     name:MAGETokenExpiredNotification
+     object:nil];
+    [[NSNotificationCenter defaultCenter]
+     removeObserver:self
+     name:Layer.GeoPackageDownloaded
+     object:nil];
+    
+    self.observingTokenExpiration = NO;
 }
 
 - (void) geoPackageDownloaded: (NSNotification *) notification {
@@ -182,6 +208,7 @@
 }
 
 - (void) logout {
+    [self stopObservingTokenExpiration];
     [self.backgroundGeoPackage close];
     [self.darkBackgroundGeoPackage close];
     self.backgroundGeoPackage = nil;
@@ -381,10 +408,13 @@
 }
 
 - (void)tokenDidExpire:(NSNotification *)notification {
-    [[Mage singleton] stopServices];
-    [[LocationService singleton] stop];
-    [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
-    [self createRootView];
+    [self stopObservingTokenExpiration];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[Mage singleton] stopServices];
+        [[LocationService singleton] stop];
+        [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
+        [self createRootView];
+    });
 }
 
 #pragma mark - Application's Documents directory
