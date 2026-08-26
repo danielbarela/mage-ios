@@ -6,25 +6,59 @@
 import UIKit
 import Kingfisher
 import Persistence
+import MaterialComponents.MaterialRipple
 
 @objc class AttachmentCell: UICollectionViewCell {
-    
+
     private var button: MDCFloatingButton?;
     private var attachment: Attachment?;
-    
+    private var messageExpanded = false;
+    private var hintLabel: UILabel?;
+    private var hintLabelHeightConstraint: NSLayoutConstraint?;
+    private var failureIcon: UIImageView?;
+
     private lazy var imageView: AttachmentUIImageView = {
         let imageView: AttachmentUIImageView = AttachmentUIImageView(image: nil);
         imageView.configureForAutoLayout();
         imageView.clipsToBounds = true;
         return imageView;
     }();
-    
+
+    // Driven manually from touchesBegan/Ended/Cancelled below, same technique MDCCard uses -
+    // there's no gesture recognizer here to hang a ripple off of since taps on this cell are
+    // handled a few different ways (collection view selection, the failure-message toggle).
+    private lazy var rippleView: MDCRippleView = {
+        let ripple = MDCRippleView(forAutoLayout: ());
+        ripple.rippleStyle = .bounded;
+        ripple.isUserInteractionEnabled = false;
+        return ripple;
+    }();
+
     override init(frame: CGRect) {
         super.init(frame: frame);
         self.configureForAutoLayout();
         self.addSubview(imageView);
         imageView.autoPinEdgesToSuperviewEdges();
+        self.addSubview(rippleView);
+        rippleView.autoPinEdgesToSuperviewEdges();
         setNeedsLayout();
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event);
+        if let point = touches.first?.location(in: rippleView) {
+            rippleView.beginRippleTouchDown(at: point, animated: true, completion: nil);
+        }
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event);
+        rippleView.beginRippleTouchUp(animated: true, completion: nil);
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event);
+        rippleView.beginRippleTouchUp(animated: true, completion: nil);
     }
     
     required init?(coder: NSCoder) {
@@ -39,14 +73,43 @@ import Persistence
         }
         button?.removeFromSuperview();
         self.attachment = nil;
+        self.messageExpanded = false;
+        self.hintLabel = nil;
+        self.hintLabelHeightConstraint = nil;
+        self.failureIcon = nil;
         for recognizer in self.imageView.gestureRecognizers ?? [] {
             self.imageView.removeGestureRecognizer(recognizer);
         }
     }
 
-    @objc func showFailureMessage() {
-        if let window = self.window {
-            ToastView.show(message: attachment?.processingMessage ?? "Upload failed", in: window);
+    @objc func toggleFailureMessage() {
+        guard let hintLabel = hintLabel, let hintLabelHeightConstraint = hintLabelHeightConstraint else { return }
+        messageExpanded.toggle();
+        failureIcon?.isHidden = messageExpanded;
+        if (messageExpanded) {
+            hintLabel.text = attachment?.processingMessage ?? "Upload failed";
+            hintLabel.numberOfLines = 0;
+        } else {
+            hintLabel.text = "Tap for Details";
+            hintLabel.numberOfLines = 1;
+        }
+
+        let width = imageView.bounds.width - 16;
+        let collapsedHeight = hintLabel.font.pointSize;
+        if (messageExpanded && width > 0) {
+            let boundingHeight = (hintLabel.text as NSString?)?.boundingRect(
+                with: CGSize(width: width, height: .greatestFiniteMagnitude),
+                options: .usesLineFragmentOrigin,
+                attributes: [.font: hintLabel.font as Any],
+                context: nil
+            ).height ?? collapsedHeight;
+            hintLabelHeightConstraint.constant = ceil(boundingHeight);
+        } else {
+            hintLabelHeightConstraint.constant = collapsedHeight;
+        }
+
+        UIView.animate(withDuration: 0.2) {
+            self.layoutIfNeeded();
         }
     }
     
@@ -76,6 +139,7 @@ import Persistence
     @objc public func setImage(newAttachment: [String : AnyHashable], button: MDCFloatingButton? = nil, scheme: MDCContainerScheming? = nil) {
         layoutSubviews()
         self.button = button
+        self.rippleView.rippleColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.16) ?? UIColor.black.withAlphaComponent(0.16)
         self.imageView.tintColor = scheme?.colorScheme.onBackgroundColor.withAlphaComponent(0.4)
         self.imageView.contentMode = .scaleAspectFill
         self.imageView.kf.indicatorType = .none
@@ -132,29 +196,41 @@ import Persistence
         layoutSubviews();
         self.button = button;
         self.attachment = attachment;
+        self.rippleView.rippleColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.16) ?? UIColor.black.withAlphaComponent(0.16);
         self.imageView.kf.indicatorType = .none;
         self.imageView.tintColor = scheme?.colorScheme.onBackgroundColor.withAlphaComponent(0.4);
 
         if (attachment.isProcessingFailed) {
-            let iconConfig = UIImage.SymbolConfiguration(pointSize: 56, weight: .regular);
-            self.imageView.image = UIImage(systemName: "exclamationmark.circle.fill")?.withConfiguration(iconConfig);
-            self.imageView.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.87);
-            self.imageView.contentMode = .center;
+            self.imageView.image = nil;
             self.imageView.accessibilityLabel = "attachment \(attachment.name ?? "") upload failed";
             self.imageView.isUserInteractionEnabled = true;
-            self.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showFailureMessage)));
+            self.imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggleFailureMessage)));
+            self.messageExpanded = false;
 
-            let label = UILabel.newAutoLayout()
-            label.text = "\(attachment.name ?? "")\nUpload Failed"
-            label.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6)
-            label.font = scheme?.typographyScheme.overline
-            label.textAlignment = .center
-            label.numberOfLines = 2
-            label.lineBreakMode = .byTruncatingTail
-            label.autoSetDimension(.height, toSize: label.font.lineHeight * 2)
-            imageView.addSubview(label)
-            label.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
-            label.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
+            let titleLabel = UILabel.newAutoLayout()
+            titleLabel.text = "Upload Failed"
+            titleLabel.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.87)
+            titleLabel.font = scheme?.typographyScheme.subtitle1
+            titleLabel.textAlignment = .center
+            titleLabel.numberOfLines = 1
+            titleLabel.autoSetDimension(.height, toSize: titleLabel.font.lineHeight)
+
+            let descriptionLabel = UILabel.newAutoLayout()
+            descriptionLabel.text = attachment.name
+            descriptionLabel.textColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.6)
+            descriptionLabel.font = scheme?.typographyScheme.caption
+            descriptionLabel.textAlignment = .center
+            descriptionLabel.numberOfLines = 1
+            descriptionLabel.lineBreakMode = .byTruncatingTail
+            descriptionLabel.autoSetDimension(.height, toSize: descriptionLabel.font.lineHeight)
+
+            let iconConfig = UIImage.SymbolConfiguration(pointSize: 56, weight: .regular);
+            let icon = UIImageView.newAutoLayout()
+            icon.image = UIImage(systemName: "exclamationmark.circle")?.withConfiguration(iconConfig);
+            icon.tintColor = scheme?.colorScheme.onSurfaceColor.withAlphaComponent(0.87);
+            icon.contentMode = .scaleAspectFit;
+            icon.autoSetDimensions(to: CGSize(width: 56, height: 56));
+            self.failureIcon = icon;
 
             let hintLabel = UILabel.newAutoLayout()
             hintLabel.text = "Tap for Details"
@@ -162,12 +238,31 @@ import Persistence
             hintLabel.font = UIFont.systemFont(ofSize: 10)
             hintLabel.textAlignment = .center
             hintLabel.numberOfLines = 1
-            hintLabel.autoSetDimension(.height, toSize: hintLabel.font.pointSize)
-            imageView.addSubview(hintLabel)
-            hintLabel.autoPinEdge(.top, to: .bottom, of: label, withOffset: 2)
-            hintLabel.autoPinEdge(toSuperviewEdge: .left, withInset: 8)
-            hintLabel.autoPinEdge(toSuperviewEdge: .right, withInset: 8)
-            hintLabel.autoPinEdge(toSuperviewEdge: .bottom, withInset: 16)
+            let hintLabelHeightConstraint = hintLabel.autoSetDimension(.height, toSize: hintLabel.font.pointSize)
+            self.hintLabel = hintLabel;
+            self.hintLabelHeightConstraint = hintLabelHeightConstraint;
+
+            // The whole group is centered as a single unit rather than anchored from any one
+            // fixed point, so it stays centered whether or not the icon is showing. UIStackView
+            // automatically collapses a hidden arranged subview's space, so hiding the icon on
+            // tap re-centers the remaining title/description/hint group for free.
+            let group = UIStackView(forAutoLayout: ());
+            group.axis = .vertical;
+            group.alignment = .center;
+            group.spacing = 2;
+            group.addArrangedSubview(icon);
+            group.setCustomSpacing(8, after: icon);
+            group.addArrangedSubview(titleLabel);
+            group.addArrangedSubview(descriptionLabel);
+            group.addArrangedSubview(hintLabel);
+            imageView.addSubview(group);
+            group.autoCenterInSuperview();
+
+            // Width constraints against imageView are only legal now that titleLabel/
+            // descriptionLabel/hintLabel actually share a view hierarchy with it (via group).
+            titleLabel.autoMatch(.width, to: .width, of: imageView, withOffset: -16)
+            descriptionLabel.autoMatch(.width, to: .width, of: imageView, withOffset: -16)
+            hintLabel.autoMatch(.width, to: .width, of: imageView, withOffset: -16)
 
             self.backgroundColor = scheme?.colorScheme.backgroundColor
 
