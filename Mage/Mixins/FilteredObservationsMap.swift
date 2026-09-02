@@ -10,6 +10,7 @@ import Foundation
 import MapKit
 import GeoPackage
 import Persistence
+import ServerDTO
 
 protocol FilteredObservationsMap: AnyObject {
     var mapView: MKMapView? { get set }
@@ -75,8 +76,8 @@ class FilteredObservationsMapMixin: NSObject, MapMixin {
             }
         }
         NotificationCenter.default.addObserver(forName: .MAGEFormFetched, object: nil, queue: .main) { [weak self] notification in
-            if let event: Event = notification.object as? Event {
-                if event.remoteId == Server.currentEventId() {
+            if let eventID: EventID = notification.object as? EventID {
+                if eventID.rawValue == Server.currentEventId() {
                     self?.addFilteredObservations()
                 }
             }

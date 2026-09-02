@@ -16,6 +16,7 @@ import ServerDTO
 import UserFetch
 import User
 import LocationFetch
+import Form
 
 @MainActor
 @objc public final class DependencyContainer: NSObject {
@@ -72,6 +73,11 @@ import LocationFetch
                         url: url,
                         session: session,
                         persistence: persistence
+                    ),
+                formIconFetch: FormRepositoryFactory
+                    .createFormIconFetchRepository(
+                        url: url,
+                        session: session
                     )
             )
             _useCaseFactory = UseCaseComposition.build(deps: appDependencies)

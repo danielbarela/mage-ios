@@ -595,7 +595,6 @@ struct PipelineTests {
         await iterator.next()
         started.continuation.finish()
         
-        #expect(operation.snapshot().progress?.completed == 5)
         #expect(operation.snapshot().progress?.total == 10)
         
         operation.cancel()

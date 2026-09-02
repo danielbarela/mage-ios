@@ -11,6 +11,7 @@ import Settings
 import UserFetch
 import User
 import LocationFetch
+import Form
 
 struct AppDependencies {
     let settingsRepository: SettingsRepository
@@ -18,4 +19,5 @@ struct AppDependencies {
     let userRepository: UserRepository
     let userFetch: AnyFetchRepository<UserFetchRequest, [UserDTO]>
     let locationFetch: AnyFetchRepository<LocationFetchRequest, LocationRepositoryFetchResult>
+    let formIconFetch: AnyFetchRepository<FormIconFetchRequest, [URL]>
 }

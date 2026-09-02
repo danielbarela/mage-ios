@@ -9,6 +9,7 @@ import Persistence
 import Settings
 import UserFetch
 import ServerDTO
+import Form
 
 @objc public class Mage: NSObject {
     
@@ -83,53 +84,35 @@ import ServerDTO
         
         await fetchMyself()
         
-        let eventTask = Event.operationToFetchEvents { task, response in
-            if let events = Event.mr_findAll() as? [Event] {
-                self.fetchFormAndStaticLayers(events: events);
+        let eventTask = Event.operationToFetchEvents { [weak self] task, response in
+            Task { [weak self] in
+                await self?.fetchFormIcons()
             }
-        } failure: { task, error in
+        } failure: { [weak self] task, error in
             NSLog("Failure to pull events");
             NotificationCenter.default.post(name: .MAGEEventsFetched, object: nil);
-            if let events = Event.mr_findAll() as? [Event] {
-                self.fetchFormAndStaticLayers(events: events);
+            Task { [weak self] in
+                await self?.fetchFormIcons()
             }
         }
         manager?.addTask(eventTask);
     }
     
-    @objc public func fetchFormAndStaticLayers(events: [Event]) {
-        let manager = MageSessionManager.shared();
-        let task = SessionTask(maxConcurrentTasks: Int32(MAGE_MaxConcurrentEvents));
+    @objc public func fetchFormIcons() async {
+        guard let events = Event.mr_findAll() as? [Event] else { return }
         
-        let currentEventId = Server.currentEventId();
-        var eventTasks: [NSNumber: [NSNumber]] = [:];
         for e in events {
             guard let remoteId = e.remoteId else {
                 continue;
             }
-            let formTask = Form.operationToPullFormIcons(eventId: remoteId) {
-                NSLog("Pulled form for event")
-                NotificationCenter.default.post(name: .MAGEFormFetched, object: e)
-            } failure: { error in
-                NSLog("Failed to pull form for event")
-                NotificationCenter.default.post(name: .MAGEFormFetched, object: e)
-            }
-            
-            guard let formTask = formTask else {
-                continue
-            }
-            if let currentEventId = currentEventId, currentEventId == remoteId {
-                formTask.priority = URLSessionTask.highPriority
-                manager?.addTask(formTask);
-            } else {
-                task?.add(formTask);
-                self.add(task: formTask, eventTasks: &eventTasks, event: e);
+            do {
+                let _ = try await DependencyContainer.shared.useCaseFactory
+                    .resolve(.GetEventFormIconsUseCase)
+                    .execute(eventID: EventID(remoteId))
+            } catch {
+                FormPackage.logger.error("Failed to fetch form icons: \(error)")
             }
         }
-        
-        MageSessionManager.setEventTasks(eventTasks);
-        task?.priority = URLSessionTask.lowPriority;
-        manager?.add(task);
     }
     
     private func add(task: URLSessionTask, eventTasks: inout [NSNumber: [NSNumber]], event: Event) {
