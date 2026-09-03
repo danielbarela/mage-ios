@@ -724,6 +724,7 @@ extension Observation: Navigable {
                             let user = User.mr_createEntity(in: context)
                             user?.remoteId = userId
                             observation.user = user
+                            try? context.save()
                             Task {
                                 let result = try await DependencyContainer.shared.useCaseFactory
                                     .resolve(.RefreshUserUseCase)
