@@ -18,7 +18,7 @@ import Form
     private override init() {
     }
     
-    @objc public func startServices(initial: Bool) {
+    @objc public func startServices(initial: Bool, eventId: NSNumber) {
         Task {
             await fetchSettings()
         }
@@ -28,7 +28,7 @@ import Form
         }
         if initial {
             Task {
-                await fetchUsers()
+                await fetchUsers(eventID: EventID(eventId))
                 NSLog("initial user fetch complete")
                 startFetchServices()
             }
@@ -49,9 +49,8 @@ import Form
         AttachmentPushService.singleton().stop();
     }
     
-    public func fetchUsers() async {
+    public func fetchUsers(eventID: EventID) async {
         do {
-            let eventID: EventID? = Server.currentEventId().map { EventID($0) }
             let eventUserFetchUseCase = try await DependencyContainer.shared.useCaseFactory
                 .resolve(.EventUserFetchUseCase)
             try await eventUserFetchUseCase.execute(eventID: eventID)

@@ -51,7 +51,8 @@ import Persistence
         self.preferredPrimaryColumnWidthFraction = 1.0;
         self.preferredDisplayMode = .oneBesideSecondary;
         
-        Mage.singleton.startServices(initial: true);
+        Mage.singleton
+            .startServices(initial: true, eventId: Server.currentEventId() ?? -1);
         
         self.delegate = self;
         
