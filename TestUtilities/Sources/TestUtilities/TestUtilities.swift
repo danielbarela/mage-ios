@@ -37,6 +37,10 @@ public class TestUtilities {
             try? await Task.sleep(nanoseconds: 100_000_000) // 0.1s delay
         }
     }
+    
+    public static func urlForFile(_ filename: String, withExtension: String? = nil) -> URL? {
+        return Bundle.module.url(forResource: filename, withExtension: withExtension)
+    }
 }
 
 // Don't do this in real code, only for tests

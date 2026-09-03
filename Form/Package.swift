@@ -19,6 +19,7 @@ let package = Package(
         .package(path: "../APIRouter"),
         .package(path: "../FetchOperation"),
         .package(path: "../UseCaseFactory"),
+        .package(path: "../TestUtilities"),
         .package(url: "https://github.com/ZipArchive/ZipArchive.git", from: "2.6.0"),
     ],
     targets: [
@@ -41,9 +42,9 @@ let package = Package(
             name: "FormTests",
             dependencies: [
                 "Form",
-                "ServerDTO"
-            ],
-            resources: [.process("Resources")]
+                "ServerDTO",
+                "TestUtilities"
+            ]
         ),
     ],
     swiftLanguageModes: [.v6]
