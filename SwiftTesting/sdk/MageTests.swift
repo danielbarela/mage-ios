@@ -108,7 +108,7 @@ extension CoreDataTests {
                 ]
             )
             let mage = Mage.singleton
-            await mage.fetchUsers()
+            await mage.fetchUsers(eventID: EventID(1))
             
             await PersistenceTestUtilities
                 .waitForCountOfEntity(

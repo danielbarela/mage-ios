@@ -145,6 +145,13 @@
         "identifier" : "LocationTests",
         "name" : "LocationTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Form",
+        "identifier" : "FormTests",
+        "name" : "FormTests"
+      }
     }
   ],
   "version" : 1

@@ -42,4 +42,11 @@ public extension NSManagedObjectContext {
             predicate: predicate
         )
     }
+    
+    func fetchFirst<T: NSManagedObject>(_ entityClass: T.Type,
+                                        key: String,
+                                        value: NSNumber) -> T? {
+        let predicate = NSPredicate(format: "%K = %@", key, value)
+        return try? self.fetchFirst(entityClass, sortBy: nil, predicate: predicate)
+    }
 }

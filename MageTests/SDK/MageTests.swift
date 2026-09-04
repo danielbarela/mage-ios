@@ -52,7 +52,7 @@ class MageTests: KIFSpec {
                 expect(AttachmentPushService.singleton().started).to(beFalse());
                 
                 UNUserNotificationCenter.current().removeAllDeliveredNotifications();
-                Mage.singleton.startServices(initial: true);
+                Mage.singleton.startServices(initial: true, eventId: 1);
                 
                 var usersFetchStubCalled = false;
                 stub(condition: isMethodGET() &&
@@ -207,7 +207,7 @@ class MageTests: KIFSpec {
                 expect(LocationFetchService.singleton.started).to(beFalse());
                 expect(ObservationFetchService.singleton.started).to(beFalse());
                 expect(AttachmentPushService.singleton().started).to(beFalse());
-                Mage.singleton.startServices(initial: false);
+                Mage.singleton.startServices(initial: false, eventId: 1);
                 
                 var usersFetchStubCalled = false;
                 stub(condition: isMethodGET() &&

@@ -15,7 +15,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/AliSoftware/OHHTTPStubs", from: "9.1.0"),
         .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.10.0")),
-        .package(name: "Persistence", path: "../Persistence")
+        .package(name: "Persistence", path: "../Persistence"),
+        .package(path: "../APIRouter")
     ],
     targets: [
         .target(
@@ -30,7 +31,7 @@ let package = Package(
         ),
         .testTarget(
             name: "TestUtilitiesTests",
-            dependencies: ["TestUtilities"]
+            dependencies: ["TestUtilities", "APIRouter"]
         ),
     ],
     swiftLanguageModes: [.v6]

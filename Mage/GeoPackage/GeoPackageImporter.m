@@ -16,7 +16,8 @@
 #import "GeoPackageFeatureTableCacheOverlay.h"
 #import "MageConstants.h"
 #import "XYZDirectoryCacheOverlay.h"
-#import <SSZipArchive/SSZipArchive.h>
+@import ZipArchive;
+//#import <SSZipArchive/SSZipArchive.h>
 
 @interface GeoPackageImporter() <SSZipArchiveDelegate>
 @property (nonatomic, strong) NSString *addedCacheOverlay;

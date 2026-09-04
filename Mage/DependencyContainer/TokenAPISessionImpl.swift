@@ -117,41 +117,6 @@ public struct TokenAPISessionImpl: TokenAPISession {
 import Alamofire
 import APIRouter
 
-public enum GeneralError: Error, Equatable {
-    case expiredToken
-    case coreDataUnavailable
-    case writeContextUnavailable
-    case noEventProvided
-    case serverError(error: String)
-    case noSessionExists
-}
-
-extension GeneralError: LocalizedError {
-    public var errorDescription: String? {
-        switch self {
-        case .expiredToken:
-            return "Token is expired."
-        case .coreDataUnavailable:
-            return "Core Data is unavailable."
-        case .writeContextUnavailable:
-            return "Write context is unavailable."
-        case .noEventProvided:
-            return "No Event ID was provided."
-        case .serverError(let error):
-            return error
-        case .noSessionExists:
-            return "No Server Session Exists"
-            
-        }
-    }
-}
-
-extension GeneralError: Identifiable {
-    public var id: String? {
-        errorDescription
-    }
-}
-
 extension Notification.Name {
     public static let APITokenExpiredNotification = Notification.Name("mil.nga.giat.mage.token.expired")
     public static let ServerContactedAfterOfflineLogin = Notification.Name("mil.nga.mage.server.contacted")

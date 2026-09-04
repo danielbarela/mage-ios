@@ -91,7 +91,8 @@ import Persistence
     }
     
     override func viewDidLoad() {
-        Mage.singleton.startServices(initial: true);
+        Mage.singleton
+            .startServices(initial: true, eventId: Server.currentEventId() ?? -1);
         super.viewDidLoad();
         
         createOrderedTabs();

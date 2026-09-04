@@ -673,7 +673,6 @@ PODS:
   - OCMock (3.9.4)
   - PureLayout (3.1.9)
   - Quick (4.0.0)
-  - SSZipArchive (2.2.3)
   - UIImage-Categories (0.0.1)
   - zxcvbn-ios (1.0.4)
 
@@ -691,7 +690,6 @@ DEPENDENCIES:
   - OCMock
   - PureLayout
   - Quick (from `https://github.com/Quick/Quick.git`, commit `a0a5fc857cea079fbe973e4faa80b6ceaf17bd46`)
-  - SSZipArchive (~> 2.2.2)
   - UIImage-Categories (~> 0.0.1)
   - zxcvbn-ios
 
@@ -712,7 +710,6 @@ SPEC REPOS:
     - Nimble
     - OCMock
     - PureLayout
-    - SSZipArchive
     - UIImage-Categories
     - zxcvbn-ios
 
@@ -743,10 +740,9 @@ SPEC CHECKSUMS:
   OCMock: 589f2c84dacb1f5aaf6e4cec1f292551fe748e74
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
   Quick: 5dc45f9bc11236594a7acc99f7bd85ecdc9a477d
-  SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   UIImage-Categories: 5103b772ae91894f4d650eb696b006f4a2487ec3
   zxcvbn-ios: fef98b7c80f1512ff0eec47ac1fa399fc00f7e3c
 
-PODFILE CHECKSUM: 6cae9341fecd8e29d018815c06b2a0e5b5a06ee7
+PODFILE CHECKSUM: fc17ff4475dcd16142a3cc8b2f8360df593e88da
 
 COCOAPODS: 1.16.2

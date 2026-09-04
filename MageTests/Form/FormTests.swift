@@ -11,6 +11,8 @@ import Quick
 import Nimble
 import OHHTTPStubs
 import Persistence
+import Form
+import ServerDTO
 
 @testable import MAGE
 
@@ -61,13 +63,19 @@ class FormTests: KIFSpec {
 
                 
                 var formPullSuccessCalled = false;
-                let task = Form.operationToPullFormIcons(eventId: 1) {
-                    formPullSuccessCalled = true;
-                } failure: { error in
-                    
+                let useCase = GetEventFormIconsUseCase(
+                    formIconFetch: FormRepositoryFactory
+                        .createFormIconFetchRepository(
+                            url: URL(string: "https://magetest")!,
+                            session: TokenAPISessionImpl(baseURL: URL(string: "https://magetest")!, loginType: "online")
+                        )
+                )
+                Task {
+                    do {
+                        try await useCase.execute(eventID: EventID(1))
+                        formPullSuccessCalled = true
+                    } catch { }
                 }
-                
-                MageSessionManager.shared().addTask(task);
                 
                 expect(stubCalled).toEventually(beTrue());
                 expect(formPullSuccessCalled).toEventually(beTrue());
@@ -100,12 +108,20 @@ class FormTests: KIFSpec {
                 
                 
                 var formPullFailureCalled = false;
-                let task = Form.operationToPullFormIcons(eventId: 1) {
-                } failure: { error in
-                    formPullFailureCalled = true;
+                let useCase = GetEventFormIconsUseCase(
+                    formIconFetch: FormRepositoryFactory
+                        .createFormIconFetchRepository(
+                            url: URL(string: "https://magetest")!,
+                            session: TokenAPISessionImpl(baseURL: URL(string: "https://magetest")!, loginType: "online")
+                        )
+                )
+                Task {
+                    do {
+                        try await useCase.execute(eventID: EventID(1))
+                    } catch {
+                        formPullFailureCalled = true
+                    }
                 }
-                
-                MageSessionManager.shared().addTask(task);
                 
                 expect(stubCalled).toEventually(beTrue());
                 expect(formPullFailureCalled).toEventually(beTrue());
@@ -137,12 +153,20 @@ class FormTests: KIFSpec {
                 
                 
                 var formPullFailureCalled = false;
-                let task = Form.operationToPullFormIcons(eventId: 1) {
-                } failure: { error in
-                    formPullFailureCalled = true;
+                let useCase = GetEventFormIconsUseCase(
+                    formIconFetch: FormRepositoryFactory
+                        .createFormIconFetchRepository(
+                            url: URL(string: "https://magetest")!,
+                            session: TokenAPISessionImpl(baseURL: URL(string: "https://magetest")!, loginType: "online")
+                        )
+                )
+                Task {
+                    do {
+                        try await useCase.execute(eventID: EventID(1))
+                    } catch {
+                        formPullFailureCalled = true
+                    }
                 }
-                
-                MageSessionManager.shared().addTask(task);
                 
                 expect(stubCalled).toEventually(beTrue());
                 expect(formPullFailureCalled).toEventually(beTrue());

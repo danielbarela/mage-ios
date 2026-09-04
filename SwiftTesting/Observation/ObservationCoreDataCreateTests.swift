@@ -39,7 +39,10 @@ extension CoreDataTests {
             ]
             
             _ = try await PersistenceContext.current!.persistence.write { context in
-                for user in (try? context.fetchObjects(Observation.self)) ?? [] {
+                for observation in (try? context.fetchObjects(Observation.self)) ?? [] {
+                    context.delete(observation)
+                }
+                for user in (try? context.fetchObjects(User.self)) ?? [] {
                     context.delete(user)
                 }
             }
@@ -47,6 +50,13 @@ extension CoreDataTests {
                 .waitForCountOfEntity(
                     PersistenceContext.current!.persistence,
                     Observation.self,
+                    0
+                )
+            
+            await PersistenceTestUtilities
+                .waitForCountOfEntity(
+                    PersistenceContext.current!.persistence,
+                    User.self,
                     0
                 )
             
@@ -98,7 +108,10 @@ extension CoreDataTests {
             ]
             
             _ = try await PersistenceContext.current!.persistence.write { context in
-                for user in (try? context.fetchObjects(Observation.self)) ?? [] {
+                for observation in (try? context.fetchObjects(Observation.self)) ?? [] {
+                    context.delete(observation)
+                }
+                for user in (try? context.fetchObjects(User.self)) ?? [] {
                     context.delete(user)
                 }
                 let newUser = User(context: context)
@@ -110,6 +123,12 @@ extension CoreDataTests {
                     PersistenceContext.current!.persistence,
                     Observation.self,
                     0
+                )
+            await PersistenceTestUtilities
+                .waitForCountOfEntity(
+                    PersistenceContext.current!.persistence,
+                    User.self,
+                    1
                 )
             
             try await PersistenceContext.current!.persistence.write { context in
@@ -156,6 +175,9 @@ extension CoreDataTests {
             )
             
             try await PersistenceContext.current!.persistence.write { context in
+                for observation in (try? context.fetchObjects(Observation.self)) ?? [] {
+                    context.delete(observation)
+                }
                 let observation = Observation(context: context)
                 observation.remoteId = "observationabc"
                 observation.dirty = false
@@ -218,8 +240,8 @@ extension CoreDataTests {
                 ]
             )
             _ = try await PersistenceContext.current!.persistence.write { context in
-                for user in (try? context.fetchObjects(Observation.self)) ?? [] {
-                    context.delete(user)
+                for observation in (try? context.fetchObjects(Observation.self)) ?? [] {
+                    context.delete(observation)
                 }
             }
             
