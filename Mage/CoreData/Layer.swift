@@ -8,26 +8,12 @@
 
 import Foundation
 import CoreData
-
-public enum LayerType : String {
-    case Feature
-    case GeoPackage
-    case Imagery
-    
-    var key : String {
-        return self.rawValue;
-    }
-}
-
+import Layer
 import Persistence
 
 extension Layer {
     
     @objc public static let GeoPackageDownloaded = "mil.nga.giat.mage.geopackage.downloaded";
-    @objc public static let OFFLINE_LAYER_LOADED = 1.0;
-    @objc public static let OFFLINE_LAYER_NOT_DOWNLOADED = 0.0;
-    @objc public static let EXTERNAL_LAYER_LOADED = 0.5;
-    @objc public static let EXTERNAL_LAYER_PROCESSING = -1.0;
     
     @objc public static func layerType(json: [AnyHashable : Any]) -> String? {
         return json[LayerKey.type.key] as? String;

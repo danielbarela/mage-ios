@@ -180,6 +180,8 @@
 		F723D60D253F6D9900C6BE34 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F723D60C253F6D9900C6BE34 /* Colors.xcassets */; };
 		F723FB1B1F606DD100620B58 /* AuthenticationCoordinator.m in Sources */ = {isa = PBXBuildFile; fileRef = F723FB1A1F606DD100620B58 /* AuthenticationCoordinator.m */; };
 		F725A9CC195CB819002A699C /* ObservationAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F725A9CB195CB819002A699C /* ObservationAnnotation.swift */; };
+		F725E0B3304C4F9100C8DC3B /* Layer in Frameworks */ = {isa = PBXBuildFile; productRef = F725E0B2304C4F9100C8DC3B /* Layer */; };
+		F725E0B5304C4F9100C8DC3B /* LayerFetch in Frameworks */ = {isa = PBXBuildFile; productRef = F725E0B4304C4F9100C8DC3B /* LayerFetch */; };
 		F727516E19C888DB006C63CB /* Locations.m in Sources */ = {isa = PBXBuildFile; fileRef = F727516D19C888DB006C63CB /* Locations.m */; };
 		F727517119C88CAE006C63CB /* Observations.m in Sources */ = {isa = PBXBuildFile; fileRef = F727517019C88CAE006C63CB /* Observations.m */; };
 		F729E9DB2034CCD100C2600D /* TestingAppDelegate.h in Sources */ = {isa = PBXBuildFile; fileRef = F729E9D82034CC3700C2600D /* TestingAppDelegate.h */; };
@@ -891,6 +893,8 @@
 		F723FB191F606DD100620B58 /* AuthenticationCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationCoordinator.h; sourceTree = "<group>"; };
 		F723FB1A1F606DD100620B58 /* AuthenticationCoordinator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AuthenticationCoordinator.m; sourceTree = "<group>"; };
 		F725A9CB195CB819002A699C /* ObservationAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObservationAnnotation.swift; sourceTree = "<group>"; };
+		F725E0B0304C4E4500C8DC3B /* Layer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Layer; sourceTree = "<group>"; };
+		F725E0B1304C4E5500C8DC3B /* LayerFetch */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = LayerFetch; sourceTree = "<group>"; };
 		F727516C19C888DB006C63CB /* Locations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Locations.h; sourceTree = "<group>"; };
 		F727516D19C888DB006C63CB /* Locations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Locations.m; sourceTree = "<group>"; };
 		F727516F19C88CAE006C63CB /* Observations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Observations.h; sourceTree = "<group>"; };
@@ -1411,6 +1415,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F725E0B3304C4F9100C8DC3B /* Layer in Frameworks */,
 				F74BDAC7302D18CC00F3E499 /* SendableExtensions in Frameworks */,
 				2FF74A4D1BEBFAD900416090 /* WebKit.framework in Frameworks */,
 				F76FAE861A5C797400BD8443 /* CoreAudio.framework in Frameworks */,
@@ -1441,6 +1446,7 @@
 				F732E73B2FC9E8F600EA1D49 /* MGRS in Frameworks */,
 				F7A94D6A18AD9CB000CB9EE0 /* Foundation.framework in Frameworks */,
 				F74BDABF302D18B800F3E499 /* APIRouter in Frameworks */,
+				F725E0B5304C4F9100C8DC3B /* LayerFetch in Frameworks */,
 				BFC94C4360074DCC5E09B8EA /* libPods-MAGE.a in Frameworks */,
 				F7181490303767EA00E033AB /* Location in Frameworks */,
 			);
@@ -2594,6 +2600,8 @@
 		F7A94D5D18AD9CAF00CB9EE0 = {
 			isa = PBXGroup;
 			children = (
+				F725E0B1304C4E5500C8DC3B /* LayerFetch */,
+				F725E0B0304C4E4500C8DC3B /* Layer */,
 				F7CB01403048BE9B00C29FE0 /* Form */,
 				F71814913037696100E033AB /* LocationFetch */,
 				F718148E3037677500E033AB /* Location */,
@@ -4549,6 +4557,14 @@
 		F71814923037699100E033AB /* LocationFetch */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LocationFetch;
+		};
+		F725E0B2304C4F9100C8DC3B /* Layer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Layer;
+		};
+		F725E0B4304C4F9100C8DC3B /* LayerFetch */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LayerFetch;
 		};
 		F732E73A2FC9E8F600EA1D49 /* MGRS */ = {
 			isa = XCSwiftPackageProductDependency;
